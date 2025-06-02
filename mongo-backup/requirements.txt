@@ -1,0 +1,3 @@
+paramiko
+azure-storage-blob
+

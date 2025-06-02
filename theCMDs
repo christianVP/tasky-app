@@ -1,0 +1,49 @@
+
+
+# this is the commands needed to re-deploy after destroy
+
+# this creates: 
+- The Azure VM with MongoDB
+
+- AKS cluster
+
+- Storage account
+
+- Kubernetes namespace and secret (with new RSA key + blob string)
+
+terraform plan
+terraform apply
+
+# Get IP of mongo-vm
+
+az network public-ip show \
+  --resource-group tasky-rg \
+  --name mongo-pip \
+  --query ipAddress \
+  --output tsv
+
+# must update mongo-backup/mongo-backup-cronjob.yaml
+
+Replace the VM_HOST environment variable’s value with the new IP
+
+
+# re-connect to new K8S cluster, to get kubectl to work
+az aks get-credentials --resource-group tasky-rg --name tasky-aks --overwrite-existing
+
+# apply the cron-job
+kubectl apply -f mongo-backup-cronjob.yaml
+
+
+# manually trigger a backup
+kubectl create job --from=cronjob/mongo-backup mongo-backup-manual -n backup
+
+# monitor what happens
+kubectl get pods -n backup
+kubectl logs <pod-name> -n backup
+
+# verify that blob storage gets the backupy
+az storage blob list --account-name taskybackup1234 --container-name <your-container> --auth-mode login
+ 
+# verify the k8s secret was created with the correct key
+kubectl get secret backup-secrets -n backup -o yaml | grep -A2 id_rsa
+

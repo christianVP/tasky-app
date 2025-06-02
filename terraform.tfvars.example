@@ -1,0 +1,7 @@
+azure_subscription_id     = "YOUR_SUBSCRIPTION_ID"
+vm_private_key_path       = "/Users/YOURNAME/.ssh/id_rsa"
+vm_public_key_path        = "/Users/YOURNAME/.ssh/id_rsa.pub"
+vm_admin_username         = "azureuser"
+azure_storage_account_name = "yourstorageaccount"
+azure_resource_group       = "your-rg"
+
