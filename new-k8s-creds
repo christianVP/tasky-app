@@ -1,2 +1,0 @@
-az aks get-credentials --resource-group tasky-rg --name tasky-aks --overwrite-existing
-
