@@ -4,6 +4,15 @@ provider "azurerm" {
   subscription_id = "12c9cd90-3a91-45d3-bf62-95ad0d62f438"
 }
 
+terraform {
+  backend "azurerm" {
+    resource_group_name  = "tasky-rg"
+    storage_account_name = "taskytfstate1234"   # replace with your actual name
+    container_name       = "tfstate"
+    key                  = "terraform.tfstate"
+  }
+}
+
 # Create Resource Group
 resource "azurerm_resource_group" "main" {
   name     = "tasky-rg"
