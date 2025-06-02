@@ -34,22 +34,23 @@ resource "azurerm_network_interface" "vm_nic" {
 
   ip_configuration {
     name                          = "internal"
-    subnet_id                    = azurerm_subnet.main.id
+    subnet_id                     = azurerm_subnet.main.id
     private_ip_address_allocation = "Dynamic"
   }
 }
 
 resource "azurerm_linux_virtual_machine" "mongo_vm" {
-  name                = "tasky-mongo-vm"
-  resource_group_name = azurerm_resource_group.main.name
-  location            = azurerm_resource_group.main.location
-  size                = "Standard_B1s"
-  admin_username      = "azureuser"
+  name                  = "tasky-mongo-vm"
+  resource_group_name   = azurerm_resource_group.main.name
+  location              = azurerm_resource_group.main.location
+  size                  = "Standard_B1s"
+  admin_username        = "azureuser"
   network_interface_ids = [azurerm_network_interface.vm_nic.id]
 
   admin_ssh_key {
     username   = "azureuser"
-    public_key = file("/Users/cpetersen/.ssh/id_rsa.pub")
+    public_key = file("${path.module}/keys/id_rsa.pub")
+
   }
 
   os_disk {
@@ -88,7 +89,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
     admin_username = "azureuser"
 
     ssh_key {
-      key_data = file("~/.ssh/id_rsa.pub")
+      key_data = file("${path.module}/keys/id_rsa.pub")
     }
   }
 }
