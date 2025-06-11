@@ -2,8 +2,12 @@ name: Terraform Deployment
 
 on:
   push:
-    branches:
-      - main  # Trigger when changes are pushed to the main branch
+    paths:
+      - 'main.tf'
+      - 'variables.tf'
+      - 'outputs.tf'
+  workflow_dispatch:  # This allows you to manually trigger the workflow
+
 
 jobs:
   terraform:

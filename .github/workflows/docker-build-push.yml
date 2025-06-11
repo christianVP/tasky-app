@@ -3,7 +3,13 @@ name: Build and Push Docker Image
 on:
   push:
     branches:
-      - main  # Trigger when changes are pushed to the main branch
+      - main  # This will still trigger on any commit to the `main` branch
+    paths:
+      - '**/*.py'
+      - '**/*.go'
+      - '**/Dockerfile'
+      - '**/*.md'  # This ensures the workflow runs on application code changes
+
 
 jobs:
   build:
