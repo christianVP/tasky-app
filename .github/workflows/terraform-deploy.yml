@@ -6,7 +6,6 @@ on:
       - 'main.tf'
       - 'variables.tf'
       - 'outputs.tf'
-  workflow_dispatch:  # This allows you to manually trigger the workflow
 
 
 jobs:
