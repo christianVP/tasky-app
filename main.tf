@@ -258,12 +258,22 @@ output "kube_config" {
 }
 
 # Storage Account for backups
+
+# adding vars to use Github Secrets
+#
+variable "blob_conn_string" {
+  description = "The connection string for the blob storage"
+  type        = string
+  # No default value because it's passed via the environment variable in GitHub Actions
+}
+
 resource "azurerm_storage_account" "backup" {
   name                     = "taskybackupstore"  # must be globally unique
   resource_group_name      = azurerm_resource_group.main.name
   location                 = azurerm_resource_group.main.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
+  connection_string        = var.blob_conn_string  # Use the variable here
 }
 
 resource "azurerm_storage_container" "backup_container" {
@@ -272,14 +282,30 @@ resource "azurerm_storage_container" "backup_container" {
   container_access_type = "blob"
 }
 
+# Use the connection string passed through the GitHub secret (via environment variable)
 locals {
-  blob_connection_string = "DefaultEndpointsProtocol=https;AccountName=${azurerm_storage_account.backup.name};AccountKey=${azurerm_storage_account.backup.primary_access_key};EndpointSuffix=core.windows.net"
+  blob_connection_string = var.blob_conn_string  # Reference the variable here
 }
 
+## old
+#locals {
+#  blob_connection_string = "DefaultEndpointsProtocol=https;AccountName=${azurerm_storage_account.backup.name};AccountKey=${azurerm_storage_account.backup.primary_access_key};EndpointSuffix=core.windows.net"
+#}
+
+## old
+
 output "blob_conn_string" {
-  value = azurerm_storage_account.backup.primary_connection_string
-  sensitive = true
+  value     = var.blob_conn_string  # Output the connection string from the variable
+  sensitive = true      
 }
+
+#old
+#output "blob_conn_string" {
+#  value = azurerm_storage_account.backup.primary_connection_string
+#  sensitive = true
+#}
+# old
+
 
 # K8S secrets
 resource "kubernetes_namespace" "backup" {
