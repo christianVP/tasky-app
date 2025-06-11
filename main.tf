@@ -28,7 +28,7 @@ terraform {
     storage_account_name = "taskytfstate1234"
     container_name       = "tfstate"
     key                  = "terraform.tfstate"
-    timeout		 = "15m"
+    timeout		 = "16m"
   }
 }
 
