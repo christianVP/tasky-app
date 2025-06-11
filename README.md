@@ -33,3 +33,9 @@ Run this once from your terminal:
 ```bash
 az login
 az account set --subscription "<your-subscription-id>"
+
+
+## CI-GitHub Actions:
+
+GitHub Actions needs secrets for AZR storage to get Terraform state
+Likewise a Service Principal must exist in Azure
