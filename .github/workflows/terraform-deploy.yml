@@ -16,13 +16,12 @@ jobs:
 
       # Step 2: Set up Terraform
       - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v1
+        uses: hashicorp/setup-terraform@v2
 
       # Step 3: Configure Azure credentials (if deploying on Azure)
-      - name: Set up Azure credentials
-        uses: azure/setup-azure-cli@v2
-        with:
-          azure-cli-version: '2.30.0'
+      - name: Install Azure CLI
+        run: |
+          curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
 
       # Step 4: Initialize Terraform (sets up the backend)
       - name: Terraform Init
