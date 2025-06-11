@@ -1,0 +1,41 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: mongo-backup
+  namespace: backup
+spec:
+  schedule: "0 * * * *" # Every hour
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: mongo-backup
+            image: cvp01/mongo-backup:latest
+            imagePullPolicy: Always
+            env:
+            - name: BLOB_CONN_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: backup-secrets
+                  key: blob-conn
+            - name: VM_HOST
+              value: "52.157.169.26"
+            - name: PRIVATE_KEY_PATH
+              value: "/root/.ssh/id_rsa"
+            - name: VM_USER
+              value: "azureuser"
+            volumeMounts:
+            - name: ssh-key
+              mountPath: /root/.ssh/id_rsa  # FIXED: previously had typo "/root.shh/"
+              subPath: id_rsa
+              readOnly: true
+          volumes:
+          - name: ssh-key
+            secret:
+              secretName: backup-secrets
+              items:
+              - key: id_rsa
+                path: id_rsa
+          restartPolicy: OnFailure
+

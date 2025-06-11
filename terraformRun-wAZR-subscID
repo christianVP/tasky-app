@@ -1,0 +1,2 @@
+terraform apply -var="azure_subscription_id=12c9cd90-3a91-45d3-bf62-95ad0d62f438"
+
