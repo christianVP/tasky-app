@@ -20,7 +20,7 @@ jobs:
 
       # Step 3: Configure Azure credentials (if deploying on Azure)
       - name: Set up Azure credentials
-        uses: azure/setup-azure-cli@v1.0
+        uses: azure/setup-azure-cli@v2
         with:
           azure-cli-version: '2.30.0'
 
