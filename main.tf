@@ -328,4 +328,4 @@ resource "kubernetes_secret" "backup_secrets" {
 # setup the cronjob for backups
 # done manually - via kubectl apply
 
-#Re-run trigger dummy 12 
+#Re-run trigger dummy 112 
