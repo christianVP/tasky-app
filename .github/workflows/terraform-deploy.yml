@@ -38,9 +38,5 @@ jobs:
           -var="subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}" \
           -var="blob_conn_string=${{ secrets.BLOB_CONN_STRING }}"
         env:
-          ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-          ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           TF_LOG: DEBUG
 
