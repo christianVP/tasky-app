@@ -267,7 +267,6 @@ resource "azurerm_storage_account" "backup" {
   location                 = azurerm_resource_group.main.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
-  connection_string        = var.blob_conn_string  # Use the variable here
 }
 
 resource "azurerm_storage_container" "backup_container" {
@@ -289,7 +288,7 @@ locals {
 ## old
 
 output "blob_conn_string" {
-  value     = var.blob_conn_string  # Output the connection string from the variable
+  value     = azurerm_storage_account.backup.primary_connection_string # Output the connection string from the variable
   sensitive = true      
 }
 
