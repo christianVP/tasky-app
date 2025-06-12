@@ -1,8 +1,9 @@
 provider "azurerm" {
   features {}
+  
   tenant_id       = var.tenant_id      # Use the tenant_id variable
-  client_id       = "95023771-20ff-4076-ad86-b67be871d9b4"
-  #client_id       = var.client_id      # Service Principal client ID
+  #client_id       = "95023771-20ff-4076-ad86-b67be871d9b4"
+  client_id       = var.client_id      # Service Principal client ID
   client_secret   = var.client_secret  # Service Principal client secret
   subscription_id = var.subscription_id # Subscription ID
   #subscription_id = "12c9cd90-3a91-45d3-bf62-95ad0d62f438"

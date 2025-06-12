@@ -28,24 +28,29 @@ variable "azure_storage_account_name" {
   default     = "taskytfstate1234"
 }
 
-variable "blob_conn_string" {
-  type      = string
-  sensitive = true
-}
-
 variable "tenant_id" {
   description = "The Tenant ID of the Azure Active Directory"
+  type        = string
+}
+
+variable "client_id" {
+  description = "The Client ID of the Service Principal"
   type        = string
 }
 
 variable "client_secret" {
   description = "The Client Secret of the Service Principal"
   type        = string
-  sensitive   = true  # To mask the secret in logs
+  sensitive   = true  # Mask the secret
 }
 
 variable "subscription_id" {
   description = "The Subscription ID in Azure"
+  type        = string
+}
+
+variable "blob_conn_string" {
+  description = "The connection string for the blob storage"
   type        = string
 }
 
