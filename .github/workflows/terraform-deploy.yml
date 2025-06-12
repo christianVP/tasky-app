@@ -31,8 +31,7 @@ jobs:
 
       # Apply Terraform configurations (deploy infrastructure)
       - name: Terraform Apply
-        run: terraform apply -auto-approve -var="tenant_id=${{ secrets.ARM_TENANT_ID }}" -var="subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}" -var="blob_conn_string=${{ secrets.BLOB_CONN_STRING }}"
+        run: terraform apply -auto-approve -var="client_secret=${{ secrets.ARM_CLIENT_SECRET }}" -var="tenant_id=${{ secrets.ARM_TENANT_ID }}" -var="subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}" -var="blob_conn_string=${{ secrets.BLOB_CONN_STRING }}"
         env:
-          ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}  # Add client_secret as an environment variable
           TF_LOG: DEBUG
 
