@@ -54,3 +54,9 @@ variable "blob_conn_string" {
   type        = string
 }
 
+variable "ssh_private_key" {
+  description = "The private SSH key for MongoDB backup"
+  type        = string
+  sensitive   = true
+}
+
