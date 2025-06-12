@@ -12,6 +12,9 @@ jobs:
   terraform:
     runs-on: ubuntu-latest
 
+    permissions:
+      id-token: write  # Grant write permissions to the id-token (necessary for authentication)
+
     steps:
       # Checkout the repository
       - name: Checkout Repository
