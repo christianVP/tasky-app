@@ -7,6 +7,7 @@ on:
       - 'variables.tf'
       - 'outputs.tf'
 
+# check to see me
 
 jobs:
   terraform:
@@ -23,14 +24,6 @@ jobs:
       # Set up Terraform
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
-
-      - name: Azure Login
-        uses: azure/login@v1
-        with:
-          client-id: ${{ secrets.ARM_CLIENT_ID }}
-          client-secret: ${{ secrets.ARM_CLIENT_SECRET }}
-          tenant-id: ${{ secrets.ARM_TENANT_ID }}
-          subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
 
       # Initialize Terraform (sets up the backend)
       - name: Terraform Init
