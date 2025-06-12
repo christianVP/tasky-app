@@ -1,7 +1,10 @@
 provider "azurerm" {
   features {}
-
-  subscription_id = "12c9cd90-3a91-45d3-bf62-95ad0d62f438"
+  tenant_id       = var.tenant_id      # Use the tenant_id variable
+  client_id       = var.client_id      # Service Principal client ID
+  client_secret   = var.client_secret  # Service Principal client secret
+  subscription_id = var.subscription_id # Subscription ID
+  # subscription_id = "12c9cd90-3a91-45d3-bf62-95ad0d62f438"
 }
 
 provider "kubernetes" {
