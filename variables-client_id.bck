@@ -1,0 +1,5 @@
+variable "client_id" {
+  description = "The Client ID of the Service Principal"
+  type        = string
+}
+

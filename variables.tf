@@ -38,11 +38,6 @@ variable "tenant_id" {
   type        = string
 }
 
-variable "client_id" {
-  description = "The Client ID of the Service Principal"
-  type        = string
-}
-
 variable "client_secret" {
   description = "The Client Secret of the Service Principal"
   type        = string
