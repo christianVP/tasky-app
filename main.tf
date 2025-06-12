@@ -259,13 +259,7 @@ output "kube_config" {
 
 # Storage Account for backups
 
-# adding vars to use Github Secrets
 #
-variable "blob_conn_string" {
-  description = "The connection string for the blob storage"
-  type        = string
-  # No default value because it's passed via the environment variable in GitHub Actions
-}
 
 resource "azurerm_storage_account" "backup" {
   name                     = "taskybackupstore"  # must be globally unique
