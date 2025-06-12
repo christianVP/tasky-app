@@ -32,10 +32,10 @@ jobs:
       # Apply Terraform configurations (deploy infrastructure)
       - name: Terraform Apply
         run: terraform apply -auto-approve \
-         -var="tenant_id=${{ secrets.ARM_TENANT_ID }}" \
-         -var="client_id=${{ secrets.ARM_CLIENT_ID }}" \
-         -var="client_secret=${{ secrets.ARM_CLIENT_SECRET }}" \
-         -var="subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}" \
+         -var="tenant_id=${{ secrets.ARM_TENANT_ID }}"\
+         -var="client_id=${{ secrets.ARM_CLIENT_ID }}"\
+         -var="client_secret=${{ secrets.ARM_CLIENT_SECRET }}"\
+         -var="subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}"\
          -var="blob_conn_string=${{ secrets.BLOB_CONN_STRING }}"
         env:
           TF_LOG: DEBUG
