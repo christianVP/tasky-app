@@ -16,23 +16,12 @@ jobs:
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v1
 
-      # Initialize Terraform (sets up the backend)
-      - name: Terraform Init
+      # Run Terraform Destroy
+      - name: Terraform Destroy
         run: |
           terraform init -backend-config="storage_account_name=${{ secrets.AZURE_STORAGE_ACCOUNT }}" \
                          -backend-config="container_name=${{ secrets.AZURE_STORAGE_CONTAINER }}" \
                          -backend-config="key=terraform.tfstate" \
                          -backend-config="access_key=${{ secrets.AZURE_STORAGE_ACCESS_KEY }}"
-
-      # Run Terraform Destroy
-      - name: Terraform Destroy
-        run: |
-          terraform destroy -auto-approve \
-            -var="tenant_id=${{ secrets.ARM_TENANT_ID }}" \
-            -var="client_id=${{ secrets.ARM_CLIENT_ID }}" \
-            -var="client_secret=${{ secrets.ARM_CLIENT_SECRET }}" \
-            -var="subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}" \
-            -var="blob_conn_string=${{ secrets.BLOB_CONN_STRING }}"
-        env:
-          TF_LOG: DEBUG
+          terraform destroy -auto-approve
 
