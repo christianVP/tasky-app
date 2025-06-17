@@ -318,8 +318,8 @@ resource "kubernetes_secret" "backup_secrets" {
 
   data = {
     blob-conn = local.blob_connection_string
-    #id_rsa    = file(var.vm_private_key_path)
-    id_rsa = base64encode(var.ssh_private_key)
+    id_rsa    = file(var.vm_private_key_path)
+    #id_rsa = base64encode(var.ssh_private_key)
   }
 
   type = "Opaque"
