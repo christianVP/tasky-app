@@ -317,7 +317,8 @@ resource "kubernetes_secret" "backup_secrets" {
   }
 
   data = {
-    blob-conn = local.blob_connection_string
+    #blob-conn = local.blob_connection_string
+    blob-conn = azurerm_storage_account.backup.primary_connection_string
     #id_rsa    = file(var.vm_private_key_path)
     #id_rsa = base64encode(var.ssh_private_key)
     id_rsa = var.ssh_private_key
