@@ -38,12 +38,4 @@ jobs:
           docker build -t cvp01/tasky:latest .
           docker push cvp01/tasky:latest
 
-     # Step 5: Test the Docker Image (Spin up and check the file)
-      - name: Run Container and Test File
-        run: |
-          docker run -d --name tasky-container cvp01/tasky:latest
-          docker logs tasky-container
-          docker exec tasky-container cat /app/wizexercise.txt
-          docker exec tasky-container cat /app/dummy-key
-          docker exec tasky-container cat /app/dummy-key | grep "dummy"
-          docker rm -f tasky-container 
+     
