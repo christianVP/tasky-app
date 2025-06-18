@@ -37,3 +37,18 @@ jobs:
           docker build -t cvp01/tasky:latest .
           docker push cvp01/tasky:latest
 
+     # Step 5: Test the Docker Image (Spin up and check the file)
+      - name: Run Container and Test File
+        run: |
+          # Spin up the container in detached mode
+          docker run -d --name tasky-container cvp01/tasky:latest
+
+          # Check if the file is inside the container
+          docker exec tasky-container cat /app/wizexercise.txt
+          docker exec tasky-container cat /app/dummy-key
+
+          # Optionally, check the file's contents
+          docker exec tasky-container cat /app/dummy-key | grep "dummy"
+
+          # Clean up by stopping and removing the container
+          docker rm -f tasky-container 
