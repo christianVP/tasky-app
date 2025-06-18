@@ -3,3 +3,4 @@ terraform.tfstate.backup
 terraform.tfvars
 new-k8s-creds
 keys/id_rsa
+checkFileStatusInTasky
