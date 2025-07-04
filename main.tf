@@ -1,3 +1,5 @@
+## providers w settings for AZR and K8S APIs, to auth and connect, what to connect to
+
 provider "azurerm" {
   features {}
   
@@ -14,6 +16,7 @@ provider "kubernetes" {
   cluster_ca_certificate = base64decode(azurerm_kubernetes_cluster.aks.kube_config[0].cluster_ca_certificate)
 }
 
+## This block declares version of prov but also where tfstate is stored
 terraform {
   required_providers {
     azurerm = {
@@ -25,7 +28,8 @@ terraform {
       version = "~> 2.0"
     }
   }
-
+  
+  ### AZR storage where terraform.tfstate is saved
   backend "azurerm" {
     resource_group_name  = "tasky-tfstate-rg"
     storage_account_name = "taskytfstate1234"
@@ -64,6 +68,7 @@ resource "azurerm_subnet" "aks_subnet" {
   address_prefixes     = ["10.1.2.0/24"]
 }
 
+# public IP for MongoDB VM
 resource "azurerm_public_ip" "vm_pip" {
   name                = "tasky-vm-pip"
   location            = azurerm_resource_group.main.location
@@ -72,6 +77,7 @@ resource "azurerm_public_ip" "vm_pip" {
   sku                 = "Basic"
 }
 
+# NSG to control access to MongoDB-VM
 resource "azurerm_network_security_group" "vm_nsg" {
   name                = "tasky-vm-nsg"
   location            = azurerm_resource_group.main.location
@@ -89,13 +95,16 @@ resource "azurerm_network_security_group" "vm_nsg" {
     destination_address_prefix = "*"
   }
 }
-
+# bind NSG and interface
 resource "azurerm_network_interface_security_group_association" "vm_nsg_assoc" {
   network_interface_id      = azurerm_network_interface.vm_nic.id
   network_security_group_id = azurerm_network_security_group.vm_nsg.id
 }
 
-# Ubuntu 18.04 VM
+# Ubuntu 18.04 VM for MongoDB 
+# install script used to install and start MongoDB
+# ssh-key used to access VM, also used in Git-secrets by GitHub-actions
+
 resource "azurerm_network_interface" "vm_nic" {
   name                = "tasky-vm-nic"
   location            = azurerm_resource_group.main.location
@@ -142,7 +151,8 @@ resource "azurerm_linux_virtual_machine" "mongo_vm" {
   custom_data = filebase64("install-mongodb.sh")
 }
 
-# Permissive CSP RBAC
+# Overly permissive CSP RBAC for MongoDB 
+# AZR RBAC 
 
 data "azurerm_subscription" "primary" {}
 
@@ -153,7 +163,15 @@ resource "azurerm_role_assignment" "mongo_vm_contributor" {
 }
 
 
-# AKS Cluster
+# AKS K8S Cluster to run tasky-app
+# netw is for subnet inside k8s cluster 
+# node pool defines what machines are used to actually run the cluster
+# DNS prefix is used for the K8S API endpoints 
+# used internally for the control plane 
+# Autoscaling enabled for VMs 
+# - no pod scaling in this version (HPA), could be rel if many simul users
+# this may not trigger VM scaling 
+
 resource "azurerm_kubernetes_cluster" "aks" {
   name                = "tasky-aks"
   location            = azurerm_resource_group.main.location
@@ -170,6 +188,9 @@ resource "azurerm_kubernetes_cluster" "aks" {
     name       = "default"
     node_count = 1
     vm_size    = "Standard_DS2_v2"
+    enable_auto_scaling = true
+    min_count           = 1
+    max_count           = 3
     vnet_subnet_id = azurerm_subnet.aks_subnet.id
   }
 
@@ -185,6 +206,13 @@ resource "azurerm_kubernetes_cluster" "aks" {
     }
   }
 }
+
+# how we deploy the tasky-app; 
+# how many replicas are needed, what container version 
+# Env vars are used to parse important variables to the taksy contianer 
+# these env var define how to connect to the MongoDB VM
+# ref the interface IP of the VM
+# the secret is for sessions 
 
 resource "kubernetes_deployment" "tasky" {
   metadata {
@@ -225,7 +253,8 @@ resource "kubernetes_deployment" "tasky" {
             name  = "SECRET"
             value = "secret123"
           }
-
+          
+          # what port to connect to
           port {
             container_port = 8080
           }
@@ -234,6 +263,12 @@ resource "kubernetes_deployment" "tasky" {
     }
   }
 }
+
+# Setup a AZR native LB service to expose the tasky-app outside the cluster
+# this automatically provides a AZT Loadbalancer and a public IP
+# the LB gets traffic on port 8080 and fwd this to the pod, listening on port 8080
+# the selector looks a the label to ensure only pods w app=tasky gets the traffic
+# DNS name for taksy-app is set manually in One.com 
 
 resource "kubernetes_service" "tasky" {
   metadata {
@@ -254,14 +289,19 @@ resource "kubernetes_service" "tasky" {
   }
 }
 
-# Outputs kubeconfig
+# Outputs kubeconfig - this is needed for kubectl and other tools
+# like "az aks get-credentials"
 output "kube_config" {
   value     = azurerm_kubernetes_cluster.aks.kube_config_raw
   sensitive = true
 }
 
 # Storage Account for backups
-
+# Assign the connection string from Git-secret and store in local var, this comes from the -var option in Actions
+# A K8S cron-job is used to schedule and run the actual backup. A container cvp01/mongo-backup is used in the cron-job.
+# This container contains a script that ssh to the MongoDB VM and runs mongodump then connects to AZR storage using the connection string
+# A separate K8S namespace is used for the backup "-n backup"
+# In here we define the Secret and it contains the ssh key and connection string 
 #
 
 resource "azurerm_storage_account" "backup" {
@@ -278,7 +318,7 @@ resource "azurerm_storage_container" "backup_container" {
   container_access_type = "blob"
 }
 
-# Use the connection string passed through the GitHub secret (via environment variable)
+# Use the connection string passed through the GitHub secret (via environment variable -var)
 locals {
   blob_connection_string = var.blob_conn_string  # Reference the variable here
 }
@@ -288,7 +328,7 @@ locals {
 #  blob_connection_string = "DefaultEndpointsProtocol=https;AccountName=${azurerm_storage_account.backup.name};AccountKey=${azurerm_storage_account.backup.primary_access_key};EndpointSuffix=core.windows.net"
 #}
 
-## old
+## we need the connection string so we can upload the actual backup from mongo
 
 output "blob_conn_string" {
   value     = azurerm_storage_account.backup.primary_connection_string # Output the connection string from the variable
@@ -304,6 +344,11 @@ output "blob_conn_string" {
 
 
 # K8S secrets
+# we need to store the connection-string and the ssh-key as secrets inside K8S 
+# we use a k8s-cronjob to schedule the backups 
+# in order to backup mongo we ssh into the VM -> need sshkey
+# we need to conn-string to connect to AZR-storage and upload the backup
+
 resource "kubernetes_namespace" "backup" {
   metadata {
     name = "backup"
