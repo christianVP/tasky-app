@@ -1,4 +1,4 @@
-
+az aks get-credentials --resource-group tasky-rg --name tasky-aks --overwrite-existing
 
 kubectl apply -f mongo-backup-cronjob.yaml
 
