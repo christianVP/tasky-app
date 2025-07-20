@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: juiceshop
+  labels:
+    app: juiceshop
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: juiceshop
+  template:
+    metadata:
+      labels:
+        app: juiceshop
+    spec:
+      containers:
+        - name: juiceshop
+          image: cvp01/juiceshop:v7.5.1   # Or use bkimminich/juice-shop:latest
+          ports:
+            - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: juiceshop-service
+  labels:
+    app: juiceshop
+spec:
+  type: LoadBalancer   # Creates an Azure LB with a public IP
+  selector:
+    app: juiceshop
+  ports:
+    - port: 80         # Expose it as HTTP (Azure LB will listen on port 80)
+      targetPort: 3000 # Forward to Juice Shop container
+

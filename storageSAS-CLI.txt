@@ -1,0 +1,34 @@
+#### CLI for storage access ####
+
+# method 1 is to create token and construct URL
+
+# Login to Azure
+az login
+
+# Generate SAS token for container
+az storage container generate-sas \
+    --account-name taskybackupstore \
+    --name tasky-backups \
+    --permissions rl \
+    --expiry 2025-07-27T23:59:00Z \
+    --https-only \
+    --auth-mode key
+
+# base URL for SAS
+https://taskybackupstore.blob.core.windows.net/backups?
+
+
+# make the container public
+
+az storage container set-permission \
+    --account-name taskybackupstore \
+    --name tasky-backups \
+    --public-access container
+
+
+# make a list - not pretty
+https://taskybackupstore.blob.core.windows.net/tasky-backups?restype=container&comp=list
+
+# get a specific backup
+https://taskybackupstore.blob.core.windows.net/tasky-backups/tasky_backup_20250720-060007.gz
+ 

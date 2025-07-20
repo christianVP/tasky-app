@@ -20,7 +20,7 @@ spec:
                   name: backup-secrets
                   key: blob-conn
             - name: VM_HOST
-              value: "52.233.190.126"
+              value: "52.174.139.80"
             - name: PRIVATE_KEY_PATH
               value: "/root/.ssh/id_rsa"
             - name: VM_USER
