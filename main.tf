@@ -207,12 +207,44 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 }
 
+# Define ServiceAccount to then set Cluster Admin priv for tasky container
+# ServiceAccount is the id, the role is the permissions and the binding assigns role to id
+# the ServiceAccount is ref in the deployment
+
+# Define the ServiceAccount
+resource "kubernetes_service_account" "tasky_service_account" {
+  metadata {
+    name      = "tasky-service-account"
+    namespace = "default"
+  }
+}
+
+# Define the ClusterRoleBinding to grant ClusterAdmin privileges
+resource "kubernetes_cluster_role_binding" "tasky_cluster_admin" {
+  metadata {
+    name = "tasky-cluster-admin"
+  }
+
+  subjects {
+    kind      = "ServiceAccount"
+    name      = kubernetes_service_account.tasky_service_account.metadata[0].name
+    namespace = kubernetes_service_account.tasky_service_account.metadata[0].namespace
+  }
+
+  role_ref {
+    kind     = "ClusterRole"
+    name     = "cluster-admin"
+    api_group = "rbac.authorization.k8s.io"
+  }
+}
+
 # how we deploy the tasky-app; 
 # how many replicas are needed, what container version 
 # Env vars are used to parse important variables to the taksy contianer 
 # these env var define how to connect to the MongoDB VM
 # ref the interface IP of the VM
 # the secret is for sessions 
+# Service Account is for Cluster Admin priv
 
 resource "kubernetes_deployment" "tasky" {
   metadata {
@@ -239,6 +271,7 @@ resource "kubernetes_deployment" "tasky" {
       }
 
       spec {
+        service_account_name = kubernetes_service_account.tasky_service_account.metadata[0].name
         container {
           image = "cvp01/tasky:4"
           name  = "tasky"
