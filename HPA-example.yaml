@@ -1,4 +1,4 @@
-# HPA YAML example (if you used K8s manifests)
+# HPA YAML example 
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:

@@ -29,6 +29,7 @@ jobs:
         run: |
           terraform destroy -auto-approve \
             -var="tenant_id=${{ secrets.ARM_TENANT_ID }}" \
+            -var="ssh_private_key=${{ secrets.SSH_PRIVATE_KEY }}" \
             -var="client_id=${{ secrets.ARM_CLIENT_ID }}" \
             -var="client_secret=${{ secrets.ARM_CLIENT_SECRET }}" \
             -var="subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}" \
