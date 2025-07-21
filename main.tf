@@ -228,7 +228,7 @@ resource "kubernetes_cluster_role_binding" "tasky_cluster_admin" {
   subject {
     kind      = "ServiceAccount"
     name      = kubernetes_service_account.tasky_service_account.metadata[0].name
-    namespace = kubernetes_service_account.tasky_service_account.metadate[0].namespace
+    namespace = kubernetes_service_account.tasky_service_account.metadata[0].namespace
   }
 
   role_ref {
