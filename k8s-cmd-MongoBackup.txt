@@ -1,0 +1,17 @@
+az aks get-credentials --resource-group tasky-rg --name tasky-aks --overwrite-existing
+
+kubectl apply -f mongo-backup-cronjob.yaml
+
+kubectl get cronjobs -n backups
+
+kubectl describe cronjob mongo-backup -n backup
+
+kubectl get jobs -n backup
+kubectl get pods -n backup
+
+# cant wait - start now
+
+kubectl create job --from=cronjob/mongo-backup mongo-backup-manual -n backup
+
+kubectl get pods -n backup
+kubectl logs <pod name> -n backup

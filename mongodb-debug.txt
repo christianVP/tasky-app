@@ -1,0 +1,71 @@
+###### MongoDB debug commands to check stuff #### 
+
+### the shell
+
+mongosh
+
+### show DBs
+
+show dbs
+
+
+### select a DB
+
+use <name>
+
+### get Collections - eg tables as in SQL
+
+show collections
+
+###
+
+
+### Relevant DB is go-mongodb
+# with these collections
+
+user
+todos
+
+### to see latest task created with pretty print use this one
+
+db.todos.find().sort({ createdAt: -1 }).limit(1).pretty()
+
+# get 5 latest 
+db.todos.find().sort({ createdAt: -1 }).limit(5).pretty()
+
+### newest task in the system
+
+db.todos.find().sort({ _id: -1 }).limit(5).pretty()
+
+
+
+### show the users in the system
+
+db.user.find().pretty()
+
+### users have ID given as ObjectID - use this to match a user
+
+# eg for chvp
+db.user.find({ name: "chvpr" }).pretty()
+
+# this give something like this
+> db.user.find({ name: "chvp" }).pretty()
+[
+  {
+    _id: ObjectId("687de53458aceb17cc578485"),
+    name: 'chvp',
+    email: 'chvp@outlook.com',
+    password: '$2a$14$br.nYtcjbMHDwI/8D/3SWu/FD4YLcrHIlRteMpIqTLhn0N4/iGUEm'
+  }
+]
+
+# then do
+db.todos.find({ userid: "687de53458aceb17cc578485" }).pretty()
+
+### combo to find ID from easy normal name
+
+db.todos.find({
+  userid: db.user.findOne({ name: "chvpr" })._id.str
+}).sort({ _id: -1 }).limit(1).pretty()
+
+
