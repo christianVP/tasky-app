@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: tasky-test
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tasky-testbed
+  namespace: tasky-test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tasky-testbed
+  template:
+    metadata:
+      labels:
+        app: tasky-testbed
+    spec:
+      containers:
+        - name: tasky-testbed
+          image: cvp01/tasky:test
+          ports:
+            - containerPort: 8080
+          env:
+            - name: MONGO_URI
+              value: mongodb://admin:mongo@mongo.chvp.dk:27017/tasky-testbed
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tasky-testbed
+  namespace: tasky-test
+spec:
+  selector:
+    app: tasky-testbed
+  ports:
+    - port: 80
+      targetPort: 8080
+  type: LoadBalancer

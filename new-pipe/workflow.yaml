@@ -1,0 +1,32 @@
+name: Testbed Deploy
+
+on:
+  push:
+    branches:
+      - testbed   # only runs when you push to testbed branch
+
+jobs:
+  build-and-deploy-testbed:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+
+      - name: Build and push Docker image
+        run: |
+          docker build -t cvp01/tasky:test .
+          docker push cvp01/tasky:test
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
+
+      - name: Deploy to Kubernetes test namespace
+        run: |
+          kubectl apply -f k8s/deployment-testbed.yaml

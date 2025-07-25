@@ -35,7 +35,7 @@ terraform {
     storage_account_name = "taskytfstate1234"
     container_name       = "tfstate"
     key                  = "terraform.tfstate"
-    lock_timeout	 = "5m"
+    #lock_timeout	 = "5m"
   }
 }
 
